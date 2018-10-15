@@ -1,7 +1,6 @@
 import abc
 from operator import itemgetter
 
-from prompt_toolkit import prompt
 from tabulate import tabulate
 
 from tag_a_day.cache import ProgressCache
@@ -66,8 +65,9 @@ class Service(object):
         justify_length = len(self.prompt_text) + longest_key
 
         def tag_prompt(tag_key):
-            response = prompt(self.prompt_text.format(
+            print(self.prompt_text.format(
                 tag_key).ljust(justify_length))
+            response = input()
             if len(response) < 1:
                 print("Tag must not be empty")
                 return tag_prompt(tag_key)

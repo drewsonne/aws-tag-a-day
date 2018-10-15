@@ -29,4 +29,4 @@ class Services(object):
         else:
             raise StopIteration()
 
-    next = __next__
+    next = __next__ # Python2 backwards compatibility

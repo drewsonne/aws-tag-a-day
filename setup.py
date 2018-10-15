@@ -19,7 +19,6 @@ setup(
     author_email='drew.sonne@gmail.com',
     install_requires=[
         'tabulate',
-        'prompt_toolkit ',
         'hconf',
         'pyyaml',
         'boto3'
