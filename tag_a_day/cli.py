@@ -1,3 +1,6 @@
+import sys
+import time
+
 from boto3 import Session
 from botocore.exceptions import ClientError
 
@@ -45,18 +48,88 @@ def initialise():
     table_region = conf.dynamodb_table_region
     table_name = conf.dynamodb_table_name
 
-    dynamodb = aws_session(table_region).client('dynamodb')
+    ddb_client = aws_session(table_region).client('dynamodb')
     print("Checking if table exists...")
-    foundTable = True
+    tableExists = True
     try:
-        dynamodb.describe_table(TableName=table_name)
+        ddb_client.describe_table(TableName=table_name)
+        tableExists = True
     except ClientError as e:
-        if e.response.get('Error') == 'ValidationException':
-            foundTable = False
+        exception = e.response.get('Error').get('Code')
+        if exception == 'ResourceNotFoundException':
+            tableExists = False
 
-    if foundTable:
-        print("Table '{table_name}' already exists.".format(table_name=table_name))
+    if tableExists:
+        print("Table '{name}' already exists.".format(
+            name=table_name))
+        sys.exit(1)
 
+    table = aws_session(table_region).resource('dynamodb').create_table(
+        TableName=table_name,
+        KeySchema=[
+            {
+                'AttributeName': 'resource_id',
+                'KeyType': 'HASH'
+            },
+            {
+                'AttributeName': 'tag_key',
+                'KeyType': 'RANGE'
+            }
+        ],
+        AttributeDefinitions=[
+            {
+                'AttributeName': 'proposer',
+                'AttributeType': 'S'
+            },
+            {
+                'AttributeName': 'resource_type',
+                'AttributeType': 'S'
+            },
+            {
+                'AttributeName': 'resource_id',
+                'AttributeType': 'S'
+            },
+            {
+                'AttributeName': 'tag_key',
+                'AttributeType': 'S'
+            }
+        ],
+        ProvisionedThroughput={
+            'ReadCapacityUnits': 5,
+            'WriteCapacityUnits': 5
+        },
+        GlobalSecondaryIndexes=[
+            {
+                'IndexName': 'proposer-resource_type',
+                'KeySchema': [
+                    {
+                        'AttributeName': 'proposer',
+                        'KeyType': 'HASH'
+                    },
+                    {
+                        'AttributeName': 'resource_type',
+                        'KeyType': 'RANGE'
+                    }
+                ],
+                'Projection': {
+                    'ProjectionType': 'ALL'
+                },
+                'ProvisionedThroughput': {
+                    'ReadCapacityUnits': 5,
+                    'WriteCapacityUnits': 5
+                }
+            }
+        ]
+    )
+    while table.table_status == 'CREATING':
+        print("Table '{name}' is '{status}'...".format(
+            status=table.table_status,
+            name=table_name
+        ))
+        time.sleep(5)
+        table.reload()
 
-if __name__ == '__main__':
-    run()
+    print("Table '{arn}' has status '{status}'".format(
+        arn=table.table_arn,
+        status=table.table_status
+    ))
