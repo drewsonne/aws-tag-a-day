@@ -9,7 +9,7 @@ class RDSTagHandler(Service):
     name = 'rds_instance'
     missing_tags_text = "This instance is missing '{0}' in its tags"
 
-    def resources(self, session: Session) -> Iterable:
+    def resources(self, session):
         rds = session.client('rds')
         paginator = rds. \
             get_paginator('describe_db_instances'). \

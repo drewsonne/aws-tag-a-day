@@ -9,7 +9,7 @@ class EMRTagHandler(Service):
     name = 'emr_cluster'
     missing_tags_text = "This EMR cluster is missing '{0}' in its tags."
 
-    def resources(self, session: Session) -> Iterable:
+    def resources(self, session):
         emr = session.client('emr')
         for emr_page in emr.get_paginator('list_clusters').paginate():
             for cluster_summary in self._random_choose(emr_page['Clusters']):

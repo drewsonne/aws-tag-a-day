@@ -92,7 +92,7 @@ class Service(object):
                     print("\n\n")
 
     @abc.abstractmethod
-    def resources(self, session: Session) -> Iterable:
+    def resources(self, session):
         raise NotImplementedError
 
     @abc.abstractmethod
