@@ -1,6 +1,4 @@
 import abc
-import random
-from math import floor
 from operator import itemgetter
 
 from prompt_toolkit import prompt

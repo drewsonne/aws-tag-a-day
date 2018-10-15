@@ -1,6 +1,3 @@
-from prompt_toolkit import prompt
-from tabulate import tabulate
-
 from tag_a_day.services.service import Service
 
 
