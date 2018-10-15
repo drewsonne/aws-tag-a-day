@@ -41,7 +41,8 @@ class EC2TagHandler(Service):
 
                 new_tags = {}
                 for tag_key in missing_tags:
-                    new_tags[tag_key] = prompt(self.prompt_text.format(tag_key).ljust(justify_length))
+                    new_tags[tag_key] = prompt(
+                        self.prompt_text.format(tag_key).ljust(justify_length))
 
                 for new_tag_key, new_tag_value in new_tags.items():
                     yield {
