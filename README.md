@@ -130,6 +130,7 @@ this should look like:
             # Print a skip message
             self._skip(vpc.vpc_id)
             return
+         
         if any(missing_tags):
           # Print information about this resource, which could be useful 
           # to provide context around tagging.
