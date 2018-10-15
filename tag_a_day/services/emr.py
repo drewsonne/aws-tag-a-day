@@ -24,18 +24,25 @@ class EMRTagHandler(Service):
                     region=region
                 )
 
+                evaluated_tags = self._progress.evaluated_tags(cluster_summary['Id'])
                 instance_info, missing_tags = \
-                    self._build_tag_sets(expected_tags, cluster['Tags'])
-
-                print(tabulate(
-                    [
-                        ("Vpc", vpc_name),
-                        ("VpcID", vpc.id),
-                        ("ClusterID", cluster_summary['Id']),
-                    ] + instance_info
-                ))
+                    self._build_tag_sets(expected_tags, evaluated_tags, cluster['Tags'])
 
                 if any(missing_tags):
+                    print("\n")
+                    print(tabulate(
+                        [
+                            ("Vpc", vpc_name),
+                            ("VpcID", vpc.id),
+                            ("ClusterID", cluster_summary['Id']),
+                        ] + instance_info
+                    ))
+
+                    if self._progress.has_finished(cluster_summary['Id'], expected_tags):
+                        print("Skipping '{0}' as it has been evaluated".format(cluster_summary['Id']))
+                        print("\n\n")
+                        continue
+
                     print(self.missing_tags_text.format(
                         "','".join(missing_tags)))
 
@@ -47,11 +54,10 @@ class EMRTagHandler(Service):
                     for tag_key in missing_tags:
                         new_tag_value = prompt(self.prompt_text.format(
                             tag_key).ljust(justify_length))
-                        new_tags[tag_key] = new_tag_value
-
-                    for new_tag_key, new_tag_value in new_tags.items():
                         yield {
                             'resource_id': cluster_summary['Id'],
-                            'tag_key': new_tag_key,
+                            'tag_key': tag_key,
                             'tag_value': new_tag_value,
                         }
+
+                    print("\n\n")

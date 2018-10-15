@@ -3,6 +3,7 @@ import random
 from math import floor
 from operator import itemgetter
 
+from tag_a_day.cache import ProgressCache
 from tag_a_day.log import logger
 
 
@@ -14,8 +15,13 @@ class Service(object):
         self._session = session
         self._proposals = table
         self._cache = cache
+        self._proposer = ''
+        self._progress = None
 
+    def load(self):
         self._proposer = self._session().client('sts').get_caller_identity().get('Arn')
+        self._progress = ProgressCache(self._proposals, self._proposer, self.name).load()
+        return self
 
     def __repr__(self):
         return self.name
@@ -26,20 +32,21 @@ class Service(object):
         vpc_name = [t for t in vpc.tags if t['Key'] == 'Name'][0]['Value']
         return vpc.id, vpc_name, vpc
 
-    def _build_tag_sets(self, expected_tags, tags):
+    def _build_tag_sets(self, expected_tags, evaluated_tags, tags):
         instance_info = [('Tag.' + t['Key'], t['Value']) for t in tags]
         instance_info.sort(key=itemgetter(0))
 
         # Compute missing tags
-        instance_tags = [tag['Key'] for tag in tags]
+        instance_tags = [tag['Key'] for tag in tags] + evaluated_tags
         missing_tags = [
-            tag for tag in expected_tags if tag not in instance_tags]
+            tag for tag in expected_tags if (tag not in instance_tags)]
 
         return instance_info, missing_tags
 
     def _random_choose(self, items):
-        for choice in random.choices(items, k=floor(len(items) * 0.6)):
-            yield choice
+        return items
+        # for choice in random.choices(items, k=floor(len(items) * 0.6)):
+        #     yield choice
 
     def run(self, expected_tags, region, session, proposals):
         logger().info("Auditing in region: {region}".format(region=region))

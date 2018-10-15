@@ -10,6 +10,9 @@ class S3TagHandler(Service):
 
     def handler(self, expected_tags, region, session, cache, proposals):
         for bucket in session.resource('s3').buckets.all():
+
+            if self._progress.has_looked_at(bucket.name, expected_tags):
+                continue
             try:
                 tags = bucket.Tagging().tag_set
             except Exception:
