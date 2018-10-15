@@ -1,7 +1,3 @@
-from typing import Iterable
-
-from boto3 import Session
-
 from tag_a_day.services.service import Service
 
 
