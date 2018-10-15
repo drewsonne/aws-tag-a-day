@@ -1,8 +1,6 @@
 import abc
 from operator import itemgetter
-from typing import Iterable
 
-from boto3 import Session
 from prompt_toolkit import prompt
 from tabulate import tabulate
 
