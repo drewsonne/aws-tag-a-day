@@ -1,21 +1,27 @@
 from setuptools import setup, find_packages
 
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
 setup(
     name='aws-tag-a-day',
-    version='0.1.0',
-    packages=find_packages(),
-    url='',
+    version='0.1.1',
+    packages=find_packages(exclude=('tests',)),
+    description='A tool for simplifying swarming of fixing AWS tags',
+    long_description_content_type='text/markdown',
+    url='https://github.com/bliseng/aws-tag-a-day',
     license='Apache2',
     author='Drew J. Sonne',
-    author_email='',
-    description='',
+    author_email='drew.sonne@gmail.com',
     install_requires=[
         'tabulate',
         'prompt_toolkit ',
         'hconf',
         'pyyaml'
     ],
-    setup_requires=["pytest-runner"],
+    setup_requires=["pytest-runner","twine","wheel"],
     tests_require=["pytest"],
     entry_points={
         'console_scripts': [
