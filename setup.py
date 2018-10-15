@@ -19,7 +19,8 @@ setup(
         'tabulate',
         'prompt_toolkit ',
         'hconf',
-        'pyyaml'
+        'pyyaml',
+        'boto3'
     ],
     setup_requires=["pytest-runner","twine","wheel"],
     tests_require=["pytest"],
