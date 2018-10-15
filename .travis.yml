@@ -3,11 +3,23 @@ python:
   - "3.6"
   - "3.7-dev"
 
+before_install:
+  - pip install codecov flake8 autopep8
+
 install:
   - pip install -r requirements.txt
 
+before_script:
+  - flake8 tag_a_day
+
 script:
   - pytest
+
+after_success:
+  - codecov
+
+after_failure:
+  - autopep8 -r -d tag_a_day
 
 deploy:
   provider: pypi
