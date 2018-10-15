@@ -10,7 +10,10 @@ class RDSTagHandler(Service):
 
     def handler(self, expected_tags, region, session, cache, proposals):
         rds = session.client('rds')
-        for instances_page in rds.get_paginator('describe_db_instances').paginate():
+        paginator = rds. \
+            get_paginator('describe_db_instances'). \
+            paginate()
+        for instances_page in paginator:
             # Randomly pick 2/3rds of the nodes
             for instance in self._random_choose(instances_page['DBInstances']):
 

@@ -1,7 +1,6 @@
 from prompt_toolkit import prompt
 from tabulate import tabulate
 
-from tag_a_day.log import logger
 from tag_a_day.services.service import Service
 
 
@@ -13,7 +12,7 @@ class S3TagHandler(Service):
         for bucket in session.resource('s3').buckets.all():
             try:
                 tags = bucket.Tagging().tag_set
-            except:
+            except Exception:
                 tags = []
             bucket_info, missing_tags = \
                 self._build_tag_sets(expected_tags, tags)

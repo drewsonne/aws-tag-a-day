@@ -1,10 +1,7 @@
-from operator import itemgetter
-
+from prompt_toolkit import prompt
 from tabulate import tabulate
 
-from tag_a_day.log import logger
 from tag_a_day.services.service import Service
-from prompt_toolkit import prompt
 
 
 class EC2TagHandler(Service):
