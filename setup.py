@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='aws-tag-a-day',
-    version='0.1.1',
+    version='0.1.2',
     packages=find_packages(exclude=('tests',)),
     description='A tool for simplifying swarming of fixing AWS tags',
     long_description_content_type='text/markdown',
@@ -25,7 +25,8 @@ setup(
     tests_require=["pytest"],
     entry_points={
         'console_scripts': [
-            'tag-a-day = tag_a_day.cli:run'
+            'tag-a-day = tag_a_day.cli:run',
+            'tag-a-day-initialise = tag_a_day.cli:initialise'
         ],
         'tag_a_day.tag_handlers': [
             'ec2 = tag_a_day.services.ec2:EC2TagHandler',

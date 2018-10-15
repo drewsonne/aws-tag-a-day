@@ -8,39 +8,34 @@ class S3TagHandler(Service):
     name = 's3'
     missing_tags_text = "This bucket is missing '{0}' in its tags."
 
-    def handler(self, expected_tags, region, session, cache, proposals):
-        for bucket in session.resource('s3').buckets.all():
+    def resources(self, session):
+        return session.resource('s3').buckets.all()
 
-            if self._progress.has_looked_at(bucket.name, expected_tags):
-                continue
-            try:
-                tags = bucket.Tagging().tag_set
-            except Exception:
-                tags = []
-            bucket_info, missing_tags = \
-                self._build_tag_sets(expected_tags, tags)
+    def handler(self, bucket, expected_tags, region, session, cache, proposals):
+        try:
+            tags = bucket.Tagging().tag_set
+        except Exception:
+            tags = []
 
-            print(tabulate(
-                [
-                    ("BucketName", bucket.name)
-                ] + bucket_info
-            ))
+        # Build table for displaying instance information
+        evaluated_tags = self._progress.evaluated_tags(bucket.name)
+        bucket_info, missing_tags = \
+            self._build_tag_sets(expected_tags, evaluated_tags, tags)
 
-            if any(missing_tags):
-                print(self.missing_tags_text.format("','".join(missing_tags)))
+        if any(missing_tags):
+            self._print_table(
+                ("BucketName", bucket.name),
+                *bucket_info
+            )
 
-                # Build padding for easier to read prompt
-                longest_key = len(max(missing_tags, key=len))
-                justify_length = len(self.prompt_text) + longest_key
+            if self._progress.has_finished(bucket.name, expected_tags):
+                self._skip(bucket.name)
+                return
 
-                new_tags = {}
-                for tag_key in missing_tags:
-                    new_tags[tag_key] = prompt(
-                        self.prompt_text.format(tag_key).ljust(justify_length))
-
-                for new_tag_key, new_tag_value in new_tags.items():
-                    yield {
-                        'resource_id': bucket.name,
-                        'tag_key': new_tag_key,
-                        'tag_value': new_tag_value
-                    }
+            tag_prompt = self._build_tag_prompt(missing_tags)
+            for tag_key in missing_tags:
+                yield {
+                    'resource_id': bucket.name,
+                    'tag_key': tag_key,
+                    'tag_value': tag_prompt(tag_key)
+                }
