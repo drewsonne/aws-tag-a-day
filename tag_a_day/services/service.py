@@ -67,7 +67,10 @@ class Service(object):
         sys.stdout.write(self.user_skip_prompt)
         sys.stdout.flush()
         response = input()
-        return len(response) == 0
+        skip = len(response) == 0
+        if skip:
+            print("\n\n")
+        return skip
 
     def _build_tag_prompt(self, missing_tags):
         sys.stdout.write((self.missing_tags_text + "\n").format(

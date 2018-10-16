@@ -53,7 +53,6 @@ class EC2TagHandler(Service):
             )
 
             if self._user_skip():
-                print("\n\n")
                 return
 
             tag_prompt = self._build_tag_prompt(missing_tags)
