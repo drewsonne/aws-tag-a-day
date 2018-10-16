@@ -2,3 +2,4 @@ tabulate
 hconf
 pyyaml
 boto3
+setuptools>=13

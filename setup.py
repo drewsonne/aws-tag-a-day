@@ -21,9 +21,10 @@ setup(
         'tabulate',
         'hconf',
         'pyyaml',
-        'boto3'
+        'boto3',
+        'setuptools>=13'
     ],
-    setup_requires=["pytest-runner", "twine", "wheel"],
+    setup_requires=["pytest-runner", "twine", "wheel", 'setuptools>12'],
     tests_require=["pytest"],
     entry_points={
         'console_scripts': [
