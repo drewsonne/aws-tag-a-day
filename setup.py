@@ -17,6 +17,7 @@ setup(
     license='Apache2',
     author='Drew J. Sonne',
     author_email='drew.sonne@gmail.com',
+    zip_safe=True,
     install_requires=[
         'tabulate',
         'hconf',
