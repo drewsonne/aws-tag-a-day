@@ -24,7 +24,7 @@ setup(
         'boto3',
         'setuptools>=13'
     ],
-    setup_requires=["pytest-runner", "twine", "wheel", 'setuptools>12'],
+    setup_requires=["pytest-runner", "twine", "wheel", 'setuptools>=13'],
     tests_require=["pytest"],
     entry_points={
         'console_scripts': [

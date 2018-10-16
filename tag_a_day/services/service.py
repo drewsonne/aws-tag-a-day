@@ -1,8 +1,7 @@
 import abc
-from operator import itemgetter
 import sys
+from operator import itemgetter
 from tabulate import tabulate
-
 from tag_a_day.cache import ProgressCache
 from tag_a_day.log import logger
 
@@ -10,6 +9,7 @@ try:
     input = raw_input
 except NameError:
     pass
+
 
 class Service(object):
     name = None
