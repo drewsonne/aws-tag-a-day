@@ -17,17 +17,20 @@ pip install aws-tag-a-day
 mkdir -p ~/.config/tagaday/
 cat > ~/.config/tagaday/config.yml <<EOY
 dynamodb-table-name: 'tag-proposals'
-dynamodb-table-region: 'us-east-1'
+dynamodb-table-region: 'eu-west-2'
 services:
 - rds
 - ec2
 - s3
+- emr
 regions:
 - us-east-1
 required-tags:
 - Project
 - Owner
 - Name
+- Service
+- Availability
 EOY
 
 # Create dynamodb table defined in the above config file.
